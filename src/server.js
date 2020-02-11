@@ -3,6 +3,6 @@ import express from 'express'; // This is the original line from the tutorial.
 const app = express();
 
 app.get('/hello', (req, res) => res.send('Hello!'));
+app.post('/hello', (req, res) => res.send('Hello post!'));
 
 app.listen(8000, () => console.log('Listening on port 8000'));
-
