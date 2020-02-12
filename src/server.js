@@ -16,32 +16,23 @@ const withDB = async (operations) => {
     const db = client.db('my-blog');
 
     // This connects to an endpoint function.
-    operations(db);
+    await operations(db);
 
     // Close database client
     client.close();
-} catch (error) {
-  res.status(500).json({ message: 'Error connecting to database', error});
-}
-
-}
-
-app.get('/api/articles/:name', async (req, res) => {
-  try {
-      const articleName = req.params.name;
-
-      const client = await MongoClient.connect('mongodb://localhost:27017', { useNewUrlParser: true });
-      const db = client.db('my-blog');
-
-      const articleInfo = await db.collection('articles').findOne({ name: articleName });
-      res.status(200).json(articleInfo);
-
-      client.close();
   } catch (error) {
     res.status(500).json({ message: 'Error connecting to database', error});
   }
+}
 
-})
+app.get('/api/articles/:name', async (req, res) => {
+  withDB(async (db) => {
+      const articleName = req.params.name;
+
+      const articleInfo = await db.collection('articles').findOne({ name: articleName });
+      res.status(200).json(articleInfo);
+  });
+});
 
 app.post('/api/articles/:name/upvote', async (req, res) => {
   try {
