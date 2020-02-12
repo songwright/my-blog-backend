@@ -7,6 +7,25 @@ const app = express();
 
 app.use(bodyParser.json());
 
+const withDB = async (operations) => {
+  // Perform database functions
+  try {
+    // Connect to MongoDB client
+    const client = await MongoClient.connect('mongodb://localhost:27017', { useNewUrlParser: true });
+    // Get MongoDB database
+    const db = client.db('my-blog');
+
+    // This connects to an endpoint function.
+    operations(db);
+
+    // Close database client
+    client.close();
+} catch (error) {
+  res.status(500).json({ message: 'Error connecting to database', error});
+}
+
+}
+
 app.get('/api/articles/:name', async (req, res) => {
   try {
       const articleName = req.params.name;
