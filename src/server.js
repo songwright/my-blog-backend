@@ -2,10 +2,12 @@ import express from 'express'; // This is the original line from the tutorial.
 // const express = require("express"); // This is the usual way to bring in express.
 import bodyParser from 'body-parser';
 import { MongoClient } from 'mongodb';
+import path from 'path';
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, '/build'))); // Where to serve static files
+app.use(bodyParser.json()); // Parse the object body from requests.
 
 const withDB = async (operations, res) => {
   // Perform database functions
@@ -67,6 +69,11 @@ app.post('/api/articles/:name/add-comment', (req, res) => {
     res.status(200).json(updatedArticleInfo);
   }, res); // Pass response object to withDB.
 });
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/build/index.html')); // All requests
+  // not caught by other API routes should be passed on to our app (in build).
+})
 
 app.listen(8000, () => console.log('Listening on port 8000'));
 
