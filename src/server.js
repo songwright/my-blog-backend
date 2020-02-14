@@ -2,11 +2,12 @@ import express from 'express'; // This is the original line from the tutorial.
 // const express = require("express"); // This is the usual way to bring in express.
 import bodyParser from 'body-parser';
 import { MongoClient } from 'mongodb';
-import path from 'path';
+import path from 'path'; // Needed for static build
 
 const app = express();
 
-app.use(express.static(path.join(__dirname, '/build'))); // Where to serve static files
+app.use(express.static(path.join(__dirname, '/build'))); // Where to serve 
+//static files. Needed for static build.
 app.use(bodyParser.json()); // Parse the object body from requests.
 
 const withDB = async (operations, res) => {
@@ -70,6 +71,7 @@ app.post('/api/articles/:name/add-comment', (req, res) => {
   }, res); // Pass response object to withDB.
 });
 
+// This app.get is needed for the static build.
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/build/index.html')); // All requests
   // not caught by other API routes should be passed on to our app (in build).
